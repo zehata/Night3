@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Project Night 3</title>
+	<style>
+	*{
+		margin: 0;
+		padding: 0;
+	}
+	canvas{
+		position: fixed;
+		background-color: #444;
+	}
+	</style>
+</head>
+<body>
+	<canvas width="600px" height="600px" id="mycanvas"></canvas>
+	<div class="inspector" style="position: absolute; bottom: 0px;">
+		<p id="horper">Horizontal perspective: </p>
+		<p id="verper">Vertical perspective: </p>
+		<p id="x">x: </p>
+		<p id="y">y: </p>
+	</div>
+	
+	<script>
+		var horizontalperspective = 90;
+		var verticalperspective = 0;
+
+		var camerax = 1.5;
+		var cameray = 0;
+		var cameraz = 2;
+
+		document.getElementById("horper").innerHTML = "Horizontal perspective: " + horizontalperspective;
+		document.getElementById("verper").innerHTML = "Vertical perspective: " + verticalperspective;
+		document.getElementById("x").innerHTML = "x: " + camerax;
+		document.getElementById("y").innerHTML = "y: " + cameray;
+
+		var cube = [[1,1,1],[1,2,1],[2,2,1],[2,1,1],[1,1,1],[1,1,0],[1,2,0],[1,2,1],[1,2,0],[2,2,0],[2,2,1],[2,2,0],[2,1,0],[2,1,1],[2,1,0],[1,1,0]];
+		// var cube = [[-2,-2,0],[-2,2,0],[-1,2,0],[-1,-2,0],[0,-2,0],[0,2,0],[1,2,0],[1,-2,0],[2,-2,0],[2,2,0],[-2,2,0],[-2,1,0],[2,1,0],[2,0,0],[-2,0,0],[-2,-1,0],[2,-1,0],[2,-2,0],[-2,-2,0]]
+		var canvas = document.getElementById("mycanvas");
+		canvas.requestPointerLock = canvas.requestPointerLock;
+		canvas.onclick = function() {
+		  canvas.requestPointerLock();
+		}
+		document.addEventListener('pointerlockchange', lockChangeAlert, false);
+		function lockChangeAlert(){
+			if (document.pointerLockElement === canvas) {
+		        document.addEventListener("mousemove", updatePosition, false);
+		  	} else {
+		    	document.removeEventListener("mousemove", updatePosition, false);
+		  }
+		}
+		function updatePosition(e){
+			horizontalperspective -= e.movementX * 0.5;
+			if (horizontalperspective > 180){
+				horizontalperspective -= 360;
+			} else if (horizontalperspective < -180){
+				horizontalperspective += 360;
+			}
+			verticalperspective -= e.movementY * 0.5;
+			if (verticalperspective > 180){
+				verticalperspective -= 360;
+			} else if (verticalperspective < -180){
+				verticalperspective += 360;
+			}
+			document.getElementById("horper").innerHTML = "Horizontal perspective: " + horizontalperspective;
+			document.getElementById("verper").innerHTML = "Vertical perspective: " + verticalperspective;
+		}
+		document.addEventListener("keydown", function(e){
+			if (e.keyCode === 87){
+				var gradient = Math.tan(horizontalperspective*Math.PI/180);
+				if (horizontalperspective > 0){
+					camerax += 0.1/Math.sqrt(gradient*gradient + 1);
+					cameray += (0.1/Math.sqrt(gradient*gradient + 1))*(gradient);
+				} else {
+					camerax -= 0.1/Math.sqrt(gradient*gradient + 1);
+					cameray -= (0.1/Math.sqrt(gradient*gradient + 1))*(gradient);
+				}
+			}
+			if (e.keyCode === 83){
+				var gradient = Math.tan((horizontalperspective+180)*Math.PI/180);
+				if (horizontalperspective < 0){
+					camerax += 0.1/Math.sqrt(gradient*gradient + 1);
+					cameray += (0.1/Math.sqrt(gradient*gradient + 1))*(gradient);
+				} else {
+					camerax -= 0.1/Math.sqrt(gradient*gradient + 1);
+					cameray -= (0.1/Math.sqrt(gradient*gradient + 1))*(gradient);
+				}
+			}
+			if (e.keyCode === 65){
+				var gradient = Math.tan((horizontalperspective+90)*Math.PI/180);
+				if (horizontalperspective > 0){
+					camerax -= 0.1/Math.sqrt(gradient*gradient + 1);
+					cameray -= (0.1/Math.sqrt(gradient*gradient + 1))*(gradient);
+				} else {
+					camerax -= 0.1/Math.sqrt(gradient*gradient + 1);
+					cameray -= (0.1/Math.sqrt(gradient*gradient + 1))*(gradient);
+				}
+			}
+			if (e.keyCode === 68){
+				var gradient = Math.tan((horizontalperspective-90)*Math.PI/180);
+				if (horizontalperspective < 0){
+					camerax += 0.1/Math.sqrt(gradient*gradient + 1);
+					cameray += (0.1/Math.sqrt(gradient*gradient + 1))*(gradient);
+				} else {
+					camerax += 0.1/Math.sqrt(gradient*gradient + 1);
+					cameray += (0.1/Math.sqrt(gradient*gradient + 1))*(gradient);
+				}
+			}
+			if (e.keyCode === 32){
+				cameraz += 0.1;
+				setTimeout(function(){cameraz += 0.05;},50);
+				setTimeout(function(){cameraz += 0.05;},75);
+				setTimeout(function(){cameraz += 0.05;},100);
+				setTimeout(function(){cameraz += 0.05;},125);
+				setTimeout(function(){cameraz += 0.05;},150);
+				setTimeout(function(){cameraz += 0.05;},175);
+				setTimeout(function(){cameraz += 0.05;},200);
+				setTimeout(function(){cameraz += 0.05;},225);
+				setTimeout(function(){cameraz -= 0.05;},250);
+				setTimeout(function(){cameraz -= 0.05;},275);
+				setTimeout(function(){cameraz -= 0.05;},300);
+				setTimeout(function(){cameraz -= 0.05;},325);
+				setTimeout(function(){cameraz -= 0.05;},350);
+				setTimeout(function(){cameraz -= 0.05;},375);
+				setTimeout(function(){cameraz -= 0.05;},400);
+				setTimeout(function(){cameraz -= 0.05;},425);
+				setTimeout(function(){cameraz -= 0.1;},450);
+			}
+			document.getElementById('x').innerHTML = "x: " + camerax;
+			document.getElementById('y').innerHTML = "y: " + cameray;
+		});
+		var ctx = canvas.getContext("2d");
+		// ctx.beginPath();
+		// render();
+		// ctx.stroke();
+		// drawreticle(300,300);
+		setInterval(function(){ctx.beginPath(); render(); ctx.stroke(); drawreticle(300,300);},5);
+		function render(){
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			
+			for(var i = 0; i < cube.length; i++){
+				var xdistance = cube[i][0] - camerax;
+				var ydistance = cube[i][1] - cameray;
+				var zdistance = cube[i][2] - cameraz;
+
+				var renderpoint = true;
+
+				if (renderpoint == true){
+					// hypotenuses
+					var hhyp = Math.sqrt((ydistance*ydistance)+(xdistance*xdistance));
+					var vhyp = Math.sqrt((zdistance*zdistance)+(ydistance*ydistance));
+					var hyp = Math.sqrt((xdistance*xdistance)+(ydistance*ydistance)+(zdistance*zdistance))
+
+					var hgra = 0;
+					var xpers = 0;
+					var vgra = 0;
+					var zpers = 0;
+
+					// gradient
+					if(xdistance!=0){
+						hgra = ydistance/xdistance;
+						xpers = Math.atan(hgra)*(180/Math.PI);
+					} else {
+						xpers = 90;
+					}
+
+					if(zdistance!=0){
+						vgra = zdistance/hhyp;
+						zpers = Math.atan(vgra)*(180/Math.PI);
+					} else {
+						zpers = 90;
+					}
+
+					var hb = 0;
+					var hpersgra = xpers + ( 90 - horizontalperspective );
+					if (hpersgra == 90){
+						hb = 0;
+					} else {
+						var hpers = Math.tan(hpersgra*Math.PI/180);
+						hb = (hyp/(Math.sqrt(hpers*hpers + 1)));
+						if (hpers < 0){
+							hb = -hb;
+						}
+					}
+					// console.log("true gradient: "+hgra);
+					// console.log("true perspective: "+xpers);
+					// console.log(horizontalperspective)
+					// console.log("perspective: "+hpersgra);
+					// console.log("gradient: "+hpers);
+					// console.log("true xdistance: "+xdistance);
+					// console.log("xdistance after perspective change: "+hb);
+					// console.log("hypotenuse: "+hyp);
+					// console.log("");
+
+					var vb = 0;
+					var vpersgra = zpers - verticalperspective;
+					if (vpersgra == 90){
+						vb = 0;
+					} else {
+						var vpers = Math.tan(vpersgra*Math.PI/180);
+						vb = hyp/(Math.sqrt(vpers*vpers + 1))*(vpers);
+					}
+
+					// how far left from origin
+					if(hyp!=0&&hb>=0){
+						var xraw = Math.asin(hb/hyp)*(180/Math.PI);
+						var x = ((xraw)/35)*300;
+					} else if (hyp!=0&&hb<0){
+						var xraw = Math.asin(hb/hyp)*(180/Math.PI);
+						var x = ((xraw)/35)*300;
+					}
+					
+					// how far down from origin
+					if(hyp!=0&&vb<0){
+						var zraw = Math.asin(vb/hyp)*(180/Math.PI);
+						var y = ((-zraw)/35)*300;
+					} else if(hyp!=0&&vb>=0){
+						var zraw = Math.asin(vb/hyp)*(180/Math.PI);
+						var y = ((-zraw)/35)*300;
+					}
+
+					ctx.strokeStyle = "#f00";
+					ctx.lineTo(x+300,y+300,cube[i][0] + ", "+ cube[i][1]);
+				}
+			}
+		}
+		function drawreticle(x, y) {
+			ctx.beginPath();
+			ctx.strokeStyle = "#f00";
+
+		    ctx.moveTo(x+4, y);
+		    ctx.lineTo(x+10, y);
+		    ctx.stroke();
+
+			ctx.beginPath();
+		    ctx.moveTo(x, y+4);
+		    ctx.lineTo(x, y+10);
+		    ctx.stroke();
+
+			ctx.beginPath();
+		    ctx.moveTo(x-4, y);
+		    ctx.lineTo(x-10, y);
+		    ctx.stroke();
+
+			ctx.beginPath();
+		    ctx.moveTo(x, y-4);
+		    ctx.lineTo(x, y-10);
+		    ctx.stroke();
+
+		    ctx.beginPath();
+		    ctx.moveTo(x-0.5, y);
+		    ctx.lineTo(x+0.5, y);
+		    ctx.stroke();
+		}
+		function drawX(x, y, text) {
+		    ctx.beginPath();
+
+		    ctx.moveTo(x - 10, y - 10);
+		    ctx.lineTo(x + 10, y + 10);
+
+		    ctx.moveTo(x + 10, y - 10);
+		    ctx.lineTo(x - 10, y + 10);
+		    ctx.stroke();
+
+		    ctx.font = "15px Arial";
+		    ctx.fillText(text,x,y);
+		}
+	</script>
+</body>
+</html>
